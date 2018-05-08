@@ -1,0 +1,42 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="setup_act_theme" parent="AppBaseTheme">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <item name="android:windowTranslucentNavigation" tools:ignore="NewApi">false</item>
+        <item name="android:statusBarColor" tools:ignore="NewApi">@color/transparent_gray</item>
+
+    </style>
+    <!-- Base application theme. -->
+    <style name="AppBaseTheme" parent="BaseStyle">
+
+        <!--<item name="android:progressBarStyle">@style/progress_bar_style</item>-->
+    </style>
+    <style name="BaseStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/main_red</item>
+        <item name="colorPrimaryDark">@color/main_red</item>
+        <item name="colorAccent">@color/main_red</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:background">@color/white</item>
+
+        <!--为兼容5.0以下的系统-->
+        <item name="editTextBackground">@android:color/transparent</item>
+        <item name="android:editTextBackground">@color/transparent</item>
+    </style>
+
+    <color name="white">#ffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_gray">#60000000</color>
+</resources>
