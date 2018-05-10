@@ -15,8 +15,4 @@
         app:indicator_height="5dp"
         app:indicator_width="5dp" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@mipmap/banner_shadow"/>
 </FrameLayout>

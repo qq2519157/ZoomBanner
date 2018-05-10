@@ -56,7 +56,7 @@
                 android:layout_height="30dp"
                 android:layout_centerVertical="true"
                 android:layout_weight="1"
-                android:background="@drawable/search_bg_gray"
+                android:background="@color/white"
                 android:clickable="true"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
