@@ -7,11 +7,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.pppcar.zoombanner.R;
+import com.pppcar.zoombanner.network.beans.MainResult;
 
 
-public class mainAdapter extends BaseHeaderAdapter<String>{
+public class MainAdapter extends BaseHeaderAdapter<MainResult.NewsDTO>{
 
-    public mainAdapter(Context context, View headerView) {
+    public MainAdapter(Context context, View headerView) {
         super(context, headerView);
     }
 
@@ -21,8 +22,8 @@ public class mainAdapter extends BaseHeaderAdapter<String>{
     }
 
     @Override
-    protected void convert(ViewHolder viewHolder, String item) {
+    protected void convert(ViewHolder viewHolder, MainResult.NewsDTO item) {
        TextView textView= viewHolder.itemView.findViewById(R.id.text);
-       textView.setText(item);
+       textView.setText(item.getTitle());
     }
 }

@@ -1,6 +1,6 @@
 package com.pppcar.zoombanner;
 
 public abstract class Constant {
-    public static final String HOST="http://www.wanandroid.com/tools/mockapi/";
-    public static final String BANNER="3796/banner";
+    public static final String HOST="https://m.pppcar.com/";
+    public static final String MAIN="v0/index/queryIndexPublicElement";
 }

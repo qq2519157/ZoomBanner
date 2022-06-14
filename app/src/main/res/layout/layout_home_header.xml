@@ -9,10 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@mipmap/default_banner"
-        app:banner_default_image="@mipmap/default_banner"
-        app:indicator_drawable_selected="@drawable/indicator_red_radius"
-        app:indicator_drawable_unselected="@drawable/indicator_gray_radius"
-        app:indicator_height="5dp"
-        app:indicator_width="5dp" />
+        app:banner_indicator_normal_color="@color/main_indicator_alpha_gray"
+        app:banner_indicator_selected_color="@color/main_red"
+        app:banner_indicator_height="5dp" />
 
 </FrameLayout>
