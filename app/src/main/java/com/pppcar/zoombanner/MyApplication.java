@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.Utils;
 import com.hjq.http.EasyConfig;
 import com.hjq.http.ssl.HttpSslConfig;
 import com.hjq.http.ssl.HttpSslFactory;
+import com.pppcar.zoombanner.network.HttpCacheManager;
 import com.pppcar.zoombanner.network.RequestHandler;
 import com.pppcar.zoombanner.network.RequestServer;
 import com.tencent.mmkv.MMKV;
@@ -44,10 +45,8 @@ public class MyApplication extends Application {
                 .setHandler(new RequestHandler(this))
                 // 设置请求重试次数
                 .setRetryCount(3)
-                // 添加全局请求参数
-//                .addParam("t", String.valueOf(System.currentTimeMillis()))
-                // 添加全局请求头
-                //.addHeader("time", "20191030")
+                // 设置缓存策略
+                .setCacheStrategy(HttpCacheManager.getInstance())
                 // 启用配置
                 .into();
     }

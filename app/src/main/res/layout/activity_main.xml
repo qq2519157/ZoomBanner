@@ -38,7 +38,6 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:background="@color/transparent"
-            android:onClick="toHotline"
             android:scaleType="centerInside"
             android:src="@mipmap/navi_service_top" />
 

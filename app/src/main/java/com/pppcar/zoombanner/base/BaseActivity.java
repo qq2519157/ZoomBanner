@@ -4,10 +4,12 @@ import android.app.ProgressDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewbinding.ViewBinding;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.hjq.http.config.IRequestApi;
 import com.hjq.http.listener.OnHttpListener;
 import com.pppcar.zoombanner.R;
 import com.pppcar.zoombanner.network.HttpData;
@@ -15,13 +17,6 @@ import com.pppcar.zoombanner.network.HttpData;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import okhttp3.Call;
-
-/**
- * Author  ： logan
- * Time    ： 2022/5/31 10:49 上午
- * Desc    ：
- */
 @SuppressWarnings({"unused", "unchecked"})
 public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActivity implements OnHttpListener<Object> {
     protected T binding;
@@ -83,24 +78,24 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
     }
 
     @Override
-    public void onSucceed(Object result) {
+    public void onHttpStart(@NonNull IRequestApi api) {
+        showDialog();
+    }
+
+    @Override
+    public void onHttpSuccess(Object result) {
         if (result instanceof HttpData && !TextUtils.isEmpty(((HttpData<?>) result).getMessage())) {
             ToastUtils.showShort(((HttpData<?>) result).getMessage());
         }
     }
 
     @Override
-    public void onFail(Exception e) {
-        ToastUtils.showShort(e.getMessage());
+    public void onHttpFail(Throwable throwable) {
+        ToastUtils.showShort(throwable.getMessage());
     }
 
     @Override
-    public void onStart(Call call) {
-        showDialog();
-    }
-
-    @Override
-    public void onEnd(Call call) {
+    public void onHttpEnd(@NonNull IRequestApi api) {
         hideDialog();
     }
 }

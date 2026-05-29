@@ -2,7 +2,6 @@ package com.pppcar.zoombanner;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -14,19 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.hjq.http.EasyHttp;
-import com.hjq.http.lifecycle.ActivityLifecycle;
-import com.hjq.http.listener.HttpCallback;
 import com.pppcar.zoombanner.adapter.MainAdapter;
 import com.pppcar.zoombanner.base.BaseActivity;
 import com.pppcar.zoombanner.databinding.ActivityMainBinding;
 import com.pppcar.zoombanner.databinding.LayoutHomeHeaderBinding;
-import com.pppcar.zoombanner.network.HttpData;
-import com.pppcar.zoombanner.network.api.MainApi;
-import com.pppcar.zoombanner.network.beans.MainResult;
 import com.pppcar.zoombanner.utils.StatusBarUtil;
 import com.scwang.smart.refresh.header.ClassicsHeader;
-import com.scwang.smart.refresh.header.MaterialHeader;
 import com.scwang.smart.refresh.layout.api.RefreshHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
@@ -35,7 +27,7 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.util.BannerUtils;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -49,6 +41,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private LayoutHomeHeaderBinding mHeaderBinding;
     private MainAdapter mAdapter;
 
+    private final List<Integer> bannerImages = Arrays.asList(
+            R.mipmap.banner_1,
+            R.mipmap.banner_2,
+            R.mipmap.banner_3
+    );
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +54,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         setContentView(ActivityMainBinding.class);
         binding.refreshLayout.setRefreshHeader(new ClassicsHeader(this));
         setupHeaderLayout();
-        //状态栏透明和间距处理
         StatusBarUtil.immersive(this);
         StatusBarUtil.setPaddingSmart(this, binding.searchContainer);
         initBanner();
@@ -93,7 +90,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(bannerWidth, LinearLayout.LayoutParams.MATCH_PARENT);
                 lp.leftMargin = 0;
                 lp.rightMargin = 0;
-                // 图片的LayoutParams
                 mHeaderBinding.mainBanner.setLayoutParams(lp);
             }
 
@@ -109,7 +105,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                initBanner();
+                binding.refreshLayout.finishRefresh();
             }
         });
         binding.scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -122,61 +118,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 if (lastScrollY < h) {
                     scrollY = Math.min(h, scrollY);
                     mScrollY = scrollY > h ? h : scrollY;
-//                    buttonBar.setAlpha(1f * mScrollY / h);
                     binding.searchContainer.setBackgroundColor(((255 * mScrollY / h) << 24) | color);
-                   /* if (mScrollY<=h) {
-                        ZoomBanner(mScrollY);
-                    }*/
                 }
                 lastScrollY = scrollY;
             }
         });
-//        buttonBar.setAlpha(0);
         binding.searchContainer.setBackgroundColor(0);
     }
 
     private void initBanner() {
-        EasyHttp
-                .get(new ActivityLifecycle(this))
-                .api(new MainApi())
-                .request(new HttpCallback<HttpData<MainResult>>(this) {
-                    @Override
-                    public void onSucceed(HttpData<MainResult> result) {
-                        super.onSucceed(result);
-                        MainResult data = result.getData();
-                        if (data != null) {
-                            List<MainResult.ResIndexBannersDTO> banners = data.getResIndexBanners();
-                            if (banners != null && banners.size() > 0) {
-                                bindData(banners);
-                            }
-                            List<MainResult.NewsDTO> news = data.getNews();
-                            if (news !=null && news.size() > 0) {
-                                mAdapter.refresh(news);
-                            }
-                        }
-                        binding.refreshLayout.finishRefresh();
-                    }
-                });
-    }
-
-    private void bindData(List<MainResult.ResIndexBannersDTO> bannerBeans) {
-        mHeaderBinding.mainBanner.setAdapter(new BannerImageAdapter<MainResult.ResIndexBannersDTO>(bannerBeans) {
+        mHeaderBinding.mainBanner.setAdapter(new BannerImageAdapter<Integer>(bannerImages) {
             @Override
-            public void onBindView(BannerImageHolder holder, MainResult.ResIndexBannersDTO data, int position, int size) {
-                //图片加载自己实现
+            public void onBindView(BannerImageHolder holder, Integer data, int position, int size) {
                 Glide.with(holder.itemView)
-                        .load(data.getImgUrl())
-                        .error(R.mipmap.default_banner)
-                        .placeholder(R.mipmap.default_banner)
+                        .load(data)
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(30)))
                         .into(holder.imageView);
             }
-
         });
     }
 
     public void ZoomBanner(int scrollY) {
-        // 缩放图片
         if (bannerWidth == 0) {
             bannerWidth = mHeaderBinding.mainBanner.getWidth();
             bannerHeight = mHeaderBinding.mainBanner.getHeight();
@@ -185,7 +147,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         lp.leftMargin = -scrollY;
         lp.rightMargin = -scrollY;
         lp.height = bannerHeight + scrollY;
-        // 图片的LayoutParams
         mHeaderBinding.mainBanner.setLayoutParams(lp);
         bannerMargin = -scrollY;
     }
@@ -195,7 +156,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         lp.leftMargin = tempMargin;
         lp.rightMargin = tempMargin;
         lp.height = bannerHeight + tempMargin;
-        // 图片的LayoutParams
         mHeaderBinding.mainBanner.setLayoutParams(lp);
         bannerMargin = tempMargin;
     }

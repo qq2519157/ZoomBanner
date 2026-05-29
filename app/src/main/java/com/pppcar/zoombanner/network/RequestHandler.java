@@ -36,11 +36,6 @@ import okhttp3.Headers;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-/**
- * Author  ： logan
- * Time    ： 2022/5/19 6:21 下午
- * Desc    ：
- */
 public class RequestHandler implements IRequestHandler {
 
     private final Application mApplication;
@@ -51,7 +46,7 @@ public class RequestHandler implements IRequestHandler {
 
     @NonNull
     @Override
-    public Object requestSucceed(@NonNull HttpRequest<?> httpRequest, @NonNull Response response, @NonNull Type type) throws Exception {
+    public Object requestSuccess(@NonNull HttpRequest<?> httpRequest, @NonNull Response response, @NonNull Type type) throws Throwable {
         if (Response.class.equals(type)) {
             return response;
         }
@@ -140,69 +135,40 @@ public class RequestHandler implements IRequestHandler {
 
     @NonNull
     @Override
-    public Exception requestFail(@NonNull HttpRequest<?> httpRequest, @NonNull Exception e) {
-        if (e instanceof HttpException) {
-            if (e instanceof TokenException) {
+    public Throwable requestFail(@NonNull HttpRequest<?> httpRequest, @NonNull Throwable throwable) {
+        if (throwable instanceof HttpException) {
+            if (throwable instanceof TokenException) {
                 // 登录信息失效，跳转到登录页
 
             }
-            return e;
+            return throwable;
         }
 
-        if (e instanceof SocketTimeoutException) {
-            return new TimeoutException(mApplication.getString(R.string.http_server_out_time), e);
+        if (throwable instanceof SocketTimeoutException) {
+            return new TimeoutException(mApplication.getString(R.string.http_server_out_time), throwable);
         }
 
-        if (e instanceof UnknownHostException) {
+        if (throwable instanceof UnknownHostException) {
             NetworkInfo info = ((ConnectivityManager) mApplication.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
             // 判断网络是否连接
             if (info != null && info.isConnected()) {
                 // 有连接就是服务器的问题
-                return new ServerException(mApplication.getString(R.string.http_server_error), e);
+                return new ServerException(mApplication.getString(R.string.http_server_error), throwable);
             }
             // 没有连接就是网络异常
-            return new NetworkException(mApplication.getString(R.string.http_network_error), e);
+            return new NetworkException(mApplication.getString(R.string.http_network_error), throwable);
         }
 
-        if (e instanceof IOException) {
-            return new CancelException(mApplication.getString(R.string.http_request_cancel), e);
+        if (throwable instanceof IOException) {
+            return new CancelException(mApplication.getString(R.string.http_request_cancel), throwable);
         }
 
-        return new HttpException(e.getMessage(), e);
+        return new HttpException(throwable.getMessage(), throwable);
     }
 
     @Nullable
     @Override
-    public Object readCache(@NonNull HttpRequest<?> httpRequest, @NonNull Type type, long cacheTime) {
-        String cacheKey = HttpCacheManager.generateCacheKey(httpRequest);
-        String cacheValue = HttpCacheManager.getMmkv().getString(cacheKey, null);
-        if (cacheValue == null || "".equals(cacheValue) || "{}".equals(cacheValue)) {
-            return null;
-        }
-        EasyLog.printLog(httpRequest, "----- readCache cacheKey -----");
-        EasyLog.printJson(httpRequest, cacheKey);
-        EasyLog.printLog(httpRequest, "----- readCache cacheValue -----");
-        EasyLog.printJson(httpRequest, cacheValue);
-        return GsonFactory.getSingletonGson().fromJson(cacheValue, type);
-    }
-
-    @Override
-    public boolean writeCache(@NonNull HttpRequest<?> httpRequest, @NonNull Response response, @NonNull Object result) {
-        String cacheKey = HttpCacheManager.generateCacheKey(httpRequest);
-        String cacheValue = GsonFactory.getSingletonGson().toJson(result);
-        if (cacheValue == null || "".equals(cacheValue) || "{}".equals(cacheValue)) {
-            return false;
-        }
-        EasyLog.printLog(httpRequest, "----- writeCache cacheKey -----");
-        EasyLog.printJson(httpRequest, cacheKey);
-        EasyLog.printLog(httpRequest, "----- writeCache cacheValue -----");
-        EasyLog.printJson(httpRequest, cacheValue);
-        return HttpCacheManager.getMmkv().putString(cacheKey, cacheValue).commit();
-    }
-
-    @Override
-    public void clearCache() {
-        HttpCacheManager.getMmkv().clearMemoryCache();
-        HttpCacheManager.getMmkv().clearAll();
+    public Type getGenericType(@Nullable Object object) {
+        return null;
     }
 }
